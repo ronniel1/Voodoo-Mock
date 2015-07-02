@@ -14,6 +14,7 @@ class VoodooIterator( iterateapi.IterateAPI ):
         self._voodoomocks = []
         self._chainCache = None
         self._perFileSettings = perFileSettings
+        self._classStaticMembers = []
 
     def out( self ):
         return self._code.result()
@@ -35,12 +36,23 @@ class VoodooIterator( iterateapi.IterateAPI ):
         self._code.lineOut( "struct " + name + ";" )
         self._code.lineOut( "" )
 
-    def variableDeclaration( self, name, text ):
+    def variableDeclaration( self, name, fullyQualifiedName, static, text ):
+        shouldIgnore = False
         if self._protectionIgnoring.ignore():
-            return
+           shouldIgnore = True
         if name in self._perFileSettings.SKIP:
+           shouldIgnore = True
+        outPrefix = ""
+        if static and self.inClass:
+            outPrefix = "static "
+            self._classStaticMembers.append( ( fullyQualifiedName, shouldIgnore ) )
+        if shouldIgnore:
             return
-        self._textOut( text )
+        if not self.inClass:
+            for classStatic, shouldIgnore in self._classStaticMembers:
+                if classStatic == fullyQualifiedName and shouldIgnore:
+                    return
+        self._textOut( outPrefix + text )
 
     def typedef( self, name, text ):
         if self._protectionIgnoring.ignore():
