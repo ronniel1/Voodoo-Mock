@@ -164,12 +164,18 @@ class IterateAPI:
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
             text = self.__nodeText( node, removeBraces = True, removeLastParenthesis = True, removePrefixKeywords = _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD, removeOneNonPunctuationTokenFromTheEnd = True, removeSuffixKeywords = [ 'noexcept' ] )
             returnType = self.__removeSpaceInsensitive( text, node.spelling )
+            templatePrefix = ""
+            if node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
+                templatePrefix = self.__templatePrefix( node )
+                assert returnType.startswith( templatePrefix ), "'%s' '%s'" % ( returnType, templatePrefix )
+                returnType = returnType[ len( templatePrefix ) : ].lstrip()
             decomposition = functiondecomposition.FunctionDecomposition(
                                                                 name = node.spelling,
                                                                 text = text,
                                                                 parameters = parameters,
                                                                 returnType = returnType,
                                                                 returnRValue = self.__returnRValue( node.result_type ),
+                                                                templatePrefix = templatePrefix,
                                                                 static = node.is_static_method(),
                                                                 const = False )
             self.functionDefinition( decomposition = decomposition )

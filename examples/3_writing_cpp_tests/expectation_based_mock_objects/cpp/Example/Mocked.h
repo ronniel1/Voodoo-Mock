@@ -26,6 +26,12 @@ void setCallback( DoItInterface * interface );
 void returnValueByReferenceOutParamter( unsigned & out );
 void returnValueByPointerOutParamter( unsigned * out );
 
+template < typename T >
+void operateOnTemplateArgument( const T & a );
+
+template < typename T >
+int templateFunction();
+
 class ClassWithIgnoredParameterPack
 {
 public:

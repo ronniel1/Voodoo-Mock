@@ -19,6 +19,25 @@ public:
 	{
 	}
 
+	void test_UseTemplateFunction()
+	{
+		Scenario scenario;
+		scenario <<
+			new CallReturnValue< int >( "templateFunction", 1 );
+		useTemplateFunction();
+		scenario.assertFinished();
+	}
+
+	void test_UseTemplateFunctionWithArgument()
+	{
+		Scenario scenario;
+		scenario <<
+			new CallReturnVoid( "operateOnTemplateArgument" ) <<
+				new EqualsValue< const int >( 10 );
+		useTemplateFunctionWithArgument();
+		scenario.assertFinished();
+	}
+
 	void test_Named()
 	{
 		FakeND_AMockedStruct fake( "fakeStruct" );

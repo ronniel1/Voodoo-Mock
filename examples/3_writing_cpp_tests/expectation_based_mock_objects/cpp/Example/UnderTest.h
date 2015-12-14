@@ -4,6 +4,16 @@
 #include "Mocked.h"
 #include <memory>
 
+void useTemplateFunctionWithArgument()
+{
+	operateOnTemplateArgument( 10 );
+}
+
+void useTemplateFunction()
+{
+	templateFunction< int >();
+}
+
 void setDefaultInterval()
 {
 	setInterval( 4 );

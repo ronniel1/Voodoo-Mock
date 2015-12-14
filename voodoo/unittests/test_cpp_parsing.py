@@ -565,8 +565,15 @@ class TestCPPParsing( unittest.TestCase ):
 
     def test_templateFunction( self ):
         self._simpleTest( "template< typename T > int func(); ", [
-            dict( callbackName = "functionDefinition", templatePrefix = "", name = "func", text = "template < typename T > int func",
-                returnRValue = False, returnType = "template < typename T > int", static = False, virtual = False, const = False, parameters = [] ),
+            dict( callbackName = "functionDefinition", templatePrefix = "template < typename T >", name = "func", text = "template < typename T > int func",
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = False, parameters = [] ),
+        ] )
+
+    def test_templateFunctionWithArgument( self ):
+        self._simpleTest( "template < typename T > int func( const T & v ); ", [
+            dict( callbackName = "functionDefinition", templatePrefix = "template < typename T >", name = "func", text = "template < typename T > int func",
+                returnRValue = False, returnType = "int", static = False, virtual = False, const = False,
+		parameters = [ {'isParameterPack': False, 'name': 'v', 'text': 'const T & v'} ] ),
         ] )
 
     def test_ClassForwardDeclaration( self ):
