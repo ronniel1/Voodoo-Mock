@@ -107,6 +107,19 @@ class TestCPPParsing( unittest.TestCase ):
             dict( callbackName = "leaveClass" ),
         ] )
 
+    def test_variadicConstructorForTemplateClass( self ):
+        self._simpleTest( "template< typename TT > class SuperDuper { public: \ntemplate< typename T, typename... ARGS >\nSuperDuper( T a, ARGS... b ) : c(1) {}\n int c; };", [
+            dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "template < typename TT >", templateParametersList = [ "TT" ],
+                fullTextNaked = "template<typenameTT>classSuperDuper{public:template<typenameT,typename...ARGS>SuperDuper(Ta,ARGS...b):c(1){}intc;}" ),
+            dict( callbackName = "accessSpec", access = "public" ),
+            dict( callbackName = "constructorDefinition", templatePrefix = "template < typename T , typename ... ARGS >", name = "SuperDuper", text = "SuperDuper",
+                returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
+                dict( name = "a", text = "T a", isParameterPack = False ),
+                dict( name = "b", text = "ARGS ... b", isParameterPack = True ), ] ),
+            dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
     def test_templateConstructor( self ):
         self._simpleTest( "class SuperDuper { public: \ntemplate< typename T >\nSuperDuper( T a, const char * b ) {}\n int c; };", [
             dict( callbackName = "enterClass", name = "SuperDuper", inheritance = [], templatePrefix = "", templateParametersList = None,
@@ -117,6 +130,20 @@ class TestCPPParsing( unittest.TestCase ):
                 dict( name = "a", text = "T a", isParameterPack = False ),
                 dict( name = "b", text = "const char * b", isParameterPack = False ), ] ),
             dict( callbackName = "fieldDeclaration", name = "c", text = "int c" ),
+            dict( callbackName = "leaveClass" ),
+        ] )
+
+    def test_templateClass( self ):
+	    self._simpleTest( "template < typename T > class A { A( int i ) : _i( i ) {};int aFunction( int a) { return 0; }; int _i;};", [
+            dict( callbackName = "enterClass", name = "A", inheritance = [], templatePrefix = "template < typename T >", templateParametersList = [ "T" ],
+	        fullTextNaked = "template<typenameT>classA{A(inti):_i(i){};intaFunction(inta){return0;};int_i;}" ),
+            dict( callbackName = "constructorDefinition", templatePrefix = "", name = "A", text = "A",
+                returnRValue = False, returnType = None, static = None, virtual = False, const = False, parameters = [
+                dict( name = "i", text = "int i", isParameterPack = False ), ] ),
+            dict( callbackName = "method", templatePrefix = "", name = "aFunction",
+                text = "aFunction", returnRValue = False, returnType = "int", static = False, virtual = False, const = False,
+                parameters = [ dict( name = "a", text = "int a", isParameterPack = False ) ] ),
+            dict( callbackName = "fieldDeclaration", name = "_i", text = "int _i" ),
             dict( callbackName = "leaveClass" ),
         ] )
 

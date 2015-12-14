@@ -115,5 +115,14 @@ void createWithTemplateConstructor( int n )
 	StructWithTemplateConstructor c { n };
 }
 
+void useTemplateClass( int i )
+{
+	TemplateClass< int > tested( i );
+}
+
+void useTemplateClassWithVariadicConstructor( int i, std::string s )
+{
+	TemplateClassWithVariadicConstructor< int > tested( i, s );
+}
 #endif // __UNDERTEST_H_
 // FILE_EXEMPT_FROM_CODE_COVERAGE

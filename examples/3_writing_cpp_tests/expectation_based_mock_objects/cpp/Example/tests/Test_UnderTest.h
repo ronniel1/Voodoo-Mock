@@ -350,4 +350,26 @@ public:
 		scenario.assertFinished();
 	}
 
+	void test_useTemplateClass()
+	{
+		Scenario scenario;
+		scenario <<
+			new Construction< TemplateClass< int > >( "class" ) <<
+				new EqualsValue< int >( 1 ) <<
+			new Destruction( "class" );
+		useTemplateClass( 1 );
+		scenario.assertFinished();
+	}
+
+	void test_useTemplateClassWithVariadicConstructor()
+	{
+		Scenario scenario;
+		scenario <<
+			new Construction< TemplateClassWithVariadicConstructor< int > >( "class" ) <<
+				new EqualsValue< int >( 1 ) <<
+				new EqualsValue< std::string >( std::string( "hello" ) ) <<
+			new Destruction( "class" );
+		useTemplateClassWithVariadicConstructor( 1, std::string( "hello" ) );
+		scenario.assertFinished();
+	}
 };

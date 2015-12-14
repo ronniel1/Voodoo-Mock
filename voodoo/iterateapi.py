@@ -1,6 +1,7 @@
 from clang import cindex
 import functiondecomposition
 import os
+import re
 import gccparity
 
 _PREFIX_KEYWORDS_TO_FUNCTIONS_TO_DISCARD = [ "static", "inline", "extern", "virtual" ]
@@ -174,15 +175,16 @@ class IterateAPI:
                                                                 const = False )
             self.functionDefinition( decomposition = decomposition )
         elif ( node.kind == cindex.CursorKind.CONSTRUCTOR or
-               ( node.kind == cindex.CursorKind.FUNCTION_TEMPLATE and node.spelling == node.lexical_parent.spelling ) ):
+               ( node.kind == cindex.CursorKind.FUNCTION_TEMPLATE and self.__stripTemplateFromName( node.spelling ) == node.lexical_parent.spelling ) ):
             children = self.__functionParameters( node )
             parameters = [ self.__parseParameter( children[ i ], lastParameter = i == len( children ) - 1 ) for i in xrange( len( children ) ) ]
             templatePrefix = ""
             if node.kind == cindex.CursorKind.FUNCTION_TEMPLATE:
                 templatePrefix = self.__templatePrefix( node )
+            name = self.__stripTemplateFromName( node.spelling )
             decomposition = functiondecomposition.FunctionDecomposition(
-                                                                name = node.spelling,
-                                                                text = node.spelling,
+                                                                name = name,
+                                                                text = name,
                                                                 parameters = parameters,
                                                                 returnType = None,
                                                                 returnRValue = False,
@@ -452,6 +454,9 @@ class IterateAPI:
             if token.spelling == "virtual":
                 return True
         return False
+
+    def __stripTemplateFromName( self, name ):
+        return re.sub(r'<.*>', '', name )
 
     def __is_member( self, node ):
         return node.semantic_parent.kind in [ cindex.CursorKind.STRUCT_DECL,

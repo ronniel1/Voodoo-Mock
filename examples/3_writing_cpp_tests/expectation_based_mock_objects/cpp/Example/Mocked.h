@@ -46,6 +46,25 @@ public:
 	void someOperation( int n, ARGS... args );
 };
 
+template < typename T >
+class TemplateClass
+{
+public:
+	TemplateClass( T i ) : _i( i ) {}
+private:
+	T _i;
+
+};
+
+template < typename T >
+class TemplateClassWithVariadicConstructor
+{
+public:
+	template < typename... ARGS >
+	TemplateClassWithVariadicConstructor( ARGS &&... args ) {}
+
+};
+
 #endif // __MOCKED_H__
 // FILE_EXEMPT_FROM_CODE_COVERAGE
 /*VOODOO_PERFILESETTINGS IGNORE_PARAMETER_PACK.append( 'ClassWithIgnoredParameterPack::someOperation' ) */
